@@ -41,7 +41,7 @@ class GameObject:
         self.body_color = body_color
 
     def draw(self):
-        """Заготовка метода отрисовки объекта."""
+        """Определяет интерфейс отрисовки игрового объекта."""
         pass
 
 
@@ -49,12 +49,12 @@ class Apple(GameObject):
     """Класс яблока."""
 
     def __init__(self):
-        """Создаёт яблоко и задаёт его начальную позицию."""
+        """Создаёт яблоко в случайной позиции."""
         super().__init__(body_color=APPLE_COLOR)
         self.randomize_position()
 
     def randomize_position(self, occupied_positions=None):
-        """Выбирает случайную свободную позицию для яблока."""
+        """Выбирает свободную позицию для яблока."""
         if occupied_positions is None:
             occupied_positions = []
 
@@ -95,7 +95,7 @@ class Snake(GameObject):
             (head_y + dy) % SCREEN_HEIGHT,
         )
 
-        if len(self.positions) > 2 and new_head in self.positions[2:]:
+        if len(self.positions) > 2 and new_head in self.positions[1:-1]:
             self.reset()
             return
 
@@ -107,7 +107,7 @@ class Snake(GameObject):
             self.last = None
 
     def draw(self):
-        """Отрисовывает змейку и стирает её след."""
+        """Отрисовывает змейку и стирает её хвост."""
         for position in self.positions:
             rect = pygame.Rect(
                 position,
@@ -152,11 +152,20 @@ def handle_keys(snake):
         if event.type == pygame.KEYDOWN:
             if event.key == pygame.K_UP and snake.direction != DOWN:
                 snake.next_direction = UP
-            elif event.key == pygame.K_DOWN and snake.direction != UP:
+            elif (
+                event.key == pygame.K_DOWN
+                and snake.direction != UP
+            ):
                 snake.next_direction = DOWN
-            elif event.key == pygame.K_LEFT and snake.direction != RIGHT:
+            elif (
+                event.key == pygame.K_LEFT
+                and snake.direction != RIGHT
+            ):
                 snake.next_direction = LEFT
-            elif event.key == pygame.K_RIGHT and snake.direction != LEFT:
+            elif (
+                event.key == pygame.K_RIGHT
+                and snake.direction != LEFT
+            ):
                 snake.next_direction = RIGHT
 
 
@@ -171,7 +180,6 @@ def main():
     pygame.display.set_caption('Изгиб Питона')
 
     clock = pygame.time.Clock()
-
     snake = Snake()
     apple = Apple()
 
@@ -187,10 +195,8 @@ def main():
             apple.randomize_position(snake.positions)
 
         screen.fill(BOARD_BACKGROUND_COLOR)
-
         snake.draw()
         apple.draw()
-
         pygame.display.update()
 
 
